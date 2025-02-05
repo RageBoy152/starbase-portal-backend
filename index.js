@@ -45,30 +45,31 @@ io.on('connection', socket => {
 
 
 
-  async function fetchObjects() {
-    Object.find()
+  async function fetchObjects(reqSocket, idSelector) {
+    Object.find(idSelector ? { id: idSelector } : {})
     .then(dbRes => {
-      io.sockets.emit('objectsFetchRes', dbRes);
+      reqSocket.emit('objectsFetchRes', dbRes);
     })
     .catch(err => {
       let errMsg = "DB error on 'objectsFetchReq'";
 
       console.log(`${errMsg}. ${err}`);
-      io.sockets.emit('objectsFetchRes', { error_message: errMsg, error: err });
+      reqSocket.emit('objectsFetchRes', { error_message: errMsg, error: err });
     });
   }
 
 
 
-  socket.on('objectsFetchReq', fetchObjects);
+  socket.on('objectsFetchReq', function () { fetchObjects(this); });
+  socket.on('objectFetchFromIdReq', function (id) { fetchObjects(this, id); });
 
 
-  socket.on('addNewObject', async (newObject) => {
+  socket.on('addNewObject', async function (newObject) {
     const NewObject = new Object(newObject);
 
     NewObject.save()
     .then(dbRes => {
-      fetchObjects();
+      fetchObjects(this);
     })
     .catch(err => {
       let errMsg = "DB error on 'addNewObject'";
@@ -79,10 +80,11 @@ io.on('connection', socket => {
   });
 
 
-  socket.on('deleteObject', async (objectId) => {
+
+  socket.on('deleteObject', async function (objectId) {
     Object.findOneAndDelete({ id: objectId })
     .then(dbRes => {
-      fetchObjects();
+      fetchObjects(this);
     })
     .catch(err => {
       let errMsg = "DB error on 'deleteObject'";
@@ -93,10 +95,10 @@ io.on('connection', socket => {
   });
 
 
-  socket.on('updateObject', async (object) => {
+  socket.on('updateObject', async function (object) {
     Object.findOneAndUpdate({ id: object.id }, object)
     .then(dbRes => {
-      fetchObjects();
+      fetchObjects(this);
     })
     .catch(err => {
       let errMsg = "DB error on 'updateObject'";

@@ -9,6 +9,7 @@ const ObjectSchema = new Schema({
   objectSN: { type: Number, required: false },
   hardwareType: { type: String, required: true },
   hardwareOrigin: { type: String, required: true },
+  hardwareOnMap: { type: String, required: true },
   standId: { type: String, required: false },
   spotId: { type: String, required: false },
   options: { type: mongoose.Schema.Types.Mixed, required: true },
