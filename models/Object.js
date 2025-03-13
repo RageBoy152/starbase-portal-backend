@@ -4,7 +4,9 @@ const { v4: uuidv4 } = require('uuid');
 
 
 const LogSchema = new Schema({
-  id: { type: String, unique: true, required: true, default: uuidv4 },
+  id: { type: String, required: true, default: uuidv4 },
+  uploadDate: { type: Date, required: true, default: Date.now },
+  editedAt: { type: Date, required: true },
   userId: { type: String, required: true },
   userName: { type: String, required: true },
   userAvatar: { type: String, required: true },
@@ -17,6 +19,7 @@ const ObjectSchema = new Schema({
   id: { type: String, unique: true, required: true, default: uuidv4 },
   objectSN: { type: String, required: false },
   hardwareType: { type: String, required: true },
+  prefabPath: { type: String, required: true },
   hardwareOrigin: { type: String, required: true },
   hardwareOnMap: { type: String, required: true },
   objectName: { type: String, required: true },
@@ -24,12 +27,12 @@ const ObjectSchema = new Schema({
   spotId: { type: String, required: false },
   zIndex: { type: String, required: true },
   options: { type: mongoose.Schema.Types.Mixed, required: true },
-  logs: { type: [LogSchema], required: true },
-  position: { type: new mongoose.Schema({
+  logs: { type: [LogSchema], required: true, default: [] },
+  position: {
     x: { type: Number, required: true },
     y: { type: Number, required: true }
-  }), required: true }
-}, {timestamps: true});
+   }
+}, { timestamps: true });
 
 
 
